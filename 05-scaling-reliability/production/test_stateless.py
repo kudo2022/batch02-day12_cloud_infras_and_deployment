@@ -69,8 +69,11 @@ for i, question in enumerate(questions, 1):
 print("-" * 60)
 print(f"Total requests: {len(questions)}")
 print(f"Instances used: {instances_seen}")
-print(f"✅ All requests served despite different instances!" if len(instances_seen) > 1
-      else "ℹ️  Only 1 instance (scale up với: docker compose up --scale agent=3)")
+print(
+    "All requests served despite different instances!"
+    if len(instances_seen) > 1
+    else "Only 1 instance (scale up with: docker compose up --scale agent=3)"
+)
 
 # Verify history is intact
 print("\n--- Conversation History ---")
@@ -79,4 +82,4 @@ print(f"Total messages: {history['count']}")
 for msg in history["messages"]:
     print(f"  [{msg['role']}]: {msg['content'][:60]}...")
 
-print("\n✅ Session history preserved across all instances via Redis!")
+print("\nSession history preserved across all instances via Redis!")

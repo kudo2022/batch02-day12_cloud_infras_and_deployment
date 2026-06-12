@@ -31,8 +31,6 @@ services:
       - QDRANT_URL=http://qdrant:6333
       # ❌ KHÔNG đặt secrets trực tiếp ở đây trong production
       # ✅ Dùng: docker secret hoặc env file ngoài git
-    env_file:
-      - .env.local              # secrets riêng, trong .gitignore
     depends_on:
       redis:
         condition: service_healthy

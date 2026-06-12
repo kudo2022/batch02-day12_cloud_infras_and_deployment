@@ -1,0 +1,211 @@
+tools:
+  - name: ask_user
+    description: "Ask the user for missing required information or explicit confirmation. Use this tool instead of plain-text clarification whenever a handle, topic, URL, DOI, or action confirmation is missing."
+    parameters:
+      type: object
+      properties:
+        question:
+          type: string
+          default: ""
+          description: "Short, clear question for the user."
+        response_type:
+          type: string
+          enum: [text, yes_no, choice]
+          default: "text"
+          description: "text for free input, yes_no for confirmation, choice for selecting one option."
+        options:
+          type: array
+          default: []
+          items:
+            type: string
+          description: "Choices to show when response_type is choice."
+      required: [question]
+
+  - name: get_user_tweets
+    description: "Get the latest tweets FROM a specific account. Use this when the user asks for tweets by a known person or handle. Do not use it for topic-based tweet search."
+    parameters:
+      type: object
+      properties:
+        screenname:
+          type: string
+          default: ""
+          description: "Twitter/X handle without @, for example sama or elonmusk."
+        limit:
+          type: integer
+          default: 5
+          description: "Number of tweets to fetch."
+      required: [screenname]
+
+  - name: search_tweets
+    description: "Search tweets ABOUT a topic or keyword. Use this when the user asks what people are saying about a topic. Do not use it for a specific account."
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Topic or keyword to search."
+        search_type:
+          type: string
+          enum: [Latest, Top]
+          default: "Latest"
+          description: "Latest for recent tweets, Top for popular tweets."
+        limit:
+          type: integer
+          default: 5
+          description: "Number of tweets to fetch."
+      required: [query]
+
+  - name: web_search
+    description: "Search the web or news with Tavily. Use this for current events, news, and topic-based research when the user did not give a specific URL."
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Search query."
+        topic:
+          type: string
+          enum: [general, news]
+          default: "general"
+          description: "Use news when the user asks for news, current events, today, or this week."
+        timeframe:
+          type: string
+          enum: [day, week, month, year]
+          default: "week"
+          description: "day for today, week for this week, and so on."
+        max_results:
+          type: integer
+          default: 5
+          description: "Maximum number of results."
+      required: [query]
+
+  - name: read_url
+    description: "Read one specific URL with Firecrawl. Use this when the user pasted a URL and wants it summarized or inspected."
+    parameters:
+      type: object
+      properties:
+        url:
+          type: string
+          default: ""
+          description: "URL to read."
+      required: [url]
+
+  - name: render_digest
+    description: "Format already gathered items into a markdown digest with sources. Use it only after tool results already exist."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "List of items with title, url, source, summary, and optional section."
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              url:
+                type: string
+              source:
+                type: string
+              summary:
+                type: string
+              section:
+                type: string
+        template:
+          type: string
+          enum: [brief, sections, bullets, thread, daily_ai_vn]
+          default: "sections"
+          description: "Digest layout template."
+        headline:
+          type: string
+          default: ""
+          description: "Digest headline."
+      required: [items, template]
+
+  - name: send_telegram
+    description: "Send text to Telegram. Use only after the user explicitly confirms sending."
+    parameters:
+      type: object
+      properties:
+        text:
+          type: string
+          default: ""
+          description: "Message text to send."
+        confirmed:
+          type: boolean
+          default: false
+          description: "Must be true only when the user has explicitly confirmed."
+      required: [text]
+
+  - name: search_company_policy
+    description: "Search the local company policy markdown knowledge base. Use it for internal policy questions, not for live news, tweets, or external paper content."
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Policy question or search phrase."
+        policy_area:
+          type: string
+          enum: [all, ai_research, source_citation, data_privacy, external_publishing, tool_usage]
+          default: "all"
+          description: "Best matching policy area."
+        top_k:
+          type: integer
+          default: 3
+          description: "Number of policy sections to return."
+      required: [query]
+
+  - name: arxiv_search
+    description: "Search arXiv for papers or preprints about a topic. Use it for broad literature discovery, not for inspecting a specific known paper."
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Keyword query for paper discovery."
+        max_results:
+          type: integer
+          default: 5
+          description: "Number of papers to return, up to 10."
+        sort_by:
+          type: string
+          enum: [relevance, lastUpdatedDate, submittedDate]
+          default: "relevance"
+          description: "Sorting method."
+      required: [query]
+
+  - name: paper_insights
+    description: "Inspect one specific paper from DOI, arXiv ID, title, or URL. Returns metadata, abstract-based summary, citation signals, venue information, and a heuristic credibility assessment."
+    parameters:
+      type: object
+      properties:
+        paper_ref:
+          type: string
+          default: ""
+          description: "DOI, arXiv ID, paper title, or supported paper URL."
+      required: [paper_ref]
+
+  - name: get_arxiv_paper_text
+    description: "Download an arXiv PDF and extract text from the first pages. Use this for deeper reading when metadata and abstract are not enough."
+    parameters:
+      type: object
+      properties:
+        arxiv_url:
+          type: string
+          default: ""
+          description: "arXiv ID or arXiv URL."
+        max_pages:
+          type: integer
+          default: 5
+          description: "Number of first pages to read."
+        max_chars:
+          type: integer
+          default: 8000
+          description: "Maximum number of characters returned."
+      required: [arxiv_url]
